@@ -5,11 +5,11 @@ import CourseDate from "./CourseDate";
 function RegisteredStudent(props) {
     return (
         <div className="registration-student card">
-            <CourseDate date={props.course.startDate} />
+            {/* <CourseDate date={props.course.startDate} /> */}
             <div className="registration-student__description">
                 <h2>{props.registeredStudent.studentName}</h2>
                 <div className="registration-student__course">
-                    {props.course.course}
+                    {/* {props.course.course} */}
                 </div>
             </div>
         </div>

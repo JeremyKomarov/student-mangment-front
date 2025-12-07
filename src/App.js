@@ -1,4 +1,6 @@
+import { useState } from "react";
 import "./App.css";
+import NewStudent from "./components/newStudent/NewStudent";
 import RegisteredStudent from "./components/studentsRegistration/RegisteredStudent";
 
 const DUMMY_DATA = [
@@ -30,16 +32,27 @@ const DUMMY_COURSES = [
 ];
 
 function App() {
+    const [registeredStudents, setRegisteredStudents] = useState(DUMMY_DATA);
+
+    const addStudentHandler = (student) => {
+        setRegisteredStudents((prevStudents) => {
+            return [student, ...prevStudents];
+        });
+    };
+
+    console.log(registeredStudents);
+
     return (
         <div className="App">
-            <RegisteredStudent
-                registeredStudent={DUMMY_DATA[0]}
-                course={DUMMY_COURSES[0]}
-            />
-            {/* <RegisteredStudent
-                registeredStudent={DUMMY_DATA[1]}
-                course={DUMMY_COURSES[1]}
-            /> */}
+            <NewStudent onRegisteredNewStudent={addStudentHandler} />
+            {registeredStudents.map((student) => {
+                return (
+                    <RegisteredStudent
+                        registeredStudent={student}
+                        // course={student.course}
+                    />
+                );
+            })}
         </div>
     );
 }
