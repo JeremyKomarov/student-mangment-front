@@ -8,6 +8,7 @@ function NewStudent(props) {
             id: Math.random().toString(),
             ...enteredStudentData,
         };
+
         props.onRegisteredNewStudent(studentData);
     };
 
@@ -15,6 +16,7 @@ function NewStudent(props) {
         <div className="new-registration">
             <StudentForm
                 onSaveRegisteredStudentData={saveRegisteredStudentDataHandler}
+                courses={props.courses}
             />
         </div>
     );

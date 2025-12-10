@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./StudentForm.css";
+import dateFormatting from "../../utils/dateUtils";
 
 function StudentForm(props) {
     const [enteredStudentName, setEnteredStudentName] = useState("");
@@ -12,10 +13,11 @@ function StudentForm(props) {
 
     const studentCourseChangeHandler = (event) => {
         setEnteredStudentCourse(event.target.value);
-    };
 
-    const startDateChangeHandler = (event) => {
-        setEnteredStartDate(event.target.value);
+        const formattedDate = dateFormatting(
+            props.courses[event.target.value].startDate
+        );
+        setEnteredStartDate(formattedDate);
     };
 
     const submitHandler = (event) => {
@@ -65,12 +67,7 @@ function StudentForm(props) {
                 </div>
                 <div className="new-registration__control">
                     <label>Course Start Date</label>
-                    <input
-                        type="date"
-                        onChange={startDateChangeHandler}
-                        value={enteredStartDate}
-                        disabled
-                    />
+                    <input type="date" value={enteredStartDate} disabled />
                 </div>
                 <div className="new-registration__actions">
                     <button type="button">Cancel</button>

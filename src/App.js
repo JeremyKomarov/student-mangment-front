@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import NewStudent from "./components/newStudent/NewStudent";
-import RegisteredStudent from "./components/studentsRegistration/RegisteredStudent";
+import Registrations from "./components/studentsRegistration/Registrations";
 
 const DUMMY_DATA = [
     {
@@ -26,33 +26,52 @@ const DUMMY_DATA = [
     },
 ];
 
-const DUMMY_COURSES = [
-    { id: "1", course: "fullstack", startDate: new Date(2023, 7, 14) },
-    { id: "2", course: "qa", startDate: new Date(2025, 2, 20) },
-];
+const DUMMY_COURSES = {
+    fullstack: {
+        id: 1,
+        name: "fullstack",
+        displayName: "Fullstack course",
+        startDate: new Date(2024, 6, 1),
+    },
+    qa: {
+        id: 2,
+        name: "qa",
+        displayName: "QA course",
+        startDate: new Date(2025, 3, 1),
+    },
+    cyber: {
+        id: 3,
+        name: "cyber",
+        displayName: "Cyber course",
+        startDate: new Date(2026, 3, 1),
+    },
+    product: {
+        id: 4,
+        name: "product",
+        displayName: "Product Manager course",
+        startDate: new Date(2025, 2, 23),
+    },
+};
 
 function App() {
     const [registeredStudents, setRegisteredStudents] = useState(DUMMY_DATA);
 
     const addStudentHandler = (student) => {
         setRegisteredStudents((prevStudents) => {
-            return [student, ...prevStudents];
+            return [...prevStudents, student];
         });
     };
 
-    console.log(registeredStudents);
-
     return (
         <div className="App">
-            <NewStudent onRegisteredNewStudent={addStudentHandler} />
-            {registeredStudents.map((student) => {
-                return (
-                    <RegisteredStudent
-                        registeredStudent={student}
-                        // course={student.course}
-                    />
-                );
-            })}
+            <NewStudent
+                onRegisteredNewStudent={addStudentHandler}
+                courses={DUMMY_COURSES}
+            />
+            <Registrations
+                registeredStudents={registeredStudents}
+                courses={DUMMY_COURSES}
+            />
         </div>
     );
 }
