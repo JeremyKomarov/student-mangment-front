@@ -32,6 +32,7 @@ function StudentForm(props) {
         setEnteredStudentName("");
         setEnteredStudentCourse("");
         setEnteredStartDate("");
+        props.onCancel();
     };
 
     return (
@@ -70,7 +71,9 @@ function StudentForm(props) {
                     <input type="date" value={enteredStartDate} disabled />
                 </div>
                 <div className="new-registration__actions">
-                    <button type="button">Cancel</button>
+                    <button type="button" onClick={props.onCancel}>
+                        Cancel
+                    </button>
                     <button type="submit">Register Student</button>
                 </div>
             </div>
