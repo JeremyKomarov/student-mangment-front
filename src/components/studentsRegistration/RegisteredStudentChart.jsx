@@ -1,29 +1,24 @@
 import React from "react";
 import Chart from "../chart/Chart";
 
-function RegisteredStudentChart(props) {
-    const chartCourseDataPoints = [];
+function RegisteredStudentChart({ registeredStudents, courses }) {
+  const chartCourseDataPoints = [];
 
-    for (const course in props.courses) {
-        chartCourseDataPoints.push({
-            ...props.courses[course],
-            displayName: props.courses[course].displayName.replace(
-                " course",
-                ""
-            ),
-        });
-    }
+  for (const course in courses) {
+    chartCourseDataPoints.push({
+      ...courses[course],
+      displayName: courses[course].displayName.replace(" Course", ""),
+    });
+  }
 
-    for (const chartCourseDataPoint of chartCourseDataPoints) {
-        const courseRegisteredStudents = props.registeredStudents.filter(
-            (student) => {
-                return student.course === chartCourseDataPoint.name;
-            }
-        );
-        chartCourseDataPoint.value = courseRegisteredStudents.length;
-    }
+  for (const chartCourseDataPoint of chartCourseDataPoints) {
+    const courseRegisteredStudents = registeredStudents.filter((student) => {
+      return student.courseId === chartCourseDataPoint.id;
+    });
+    chartCourseDataPoint.value = courseRegisteredStudents.length;
+  }
 
-    return <Chart dataPoints={chartCourseDataPoints} />;
+  return <Chart dataPoints={chartCourseDataPoints} />;
 }
 
 export default RegisteredStudentChart;

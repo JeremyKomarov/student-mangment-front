@@ -4,35 +4,39 @@ import RegisteredStudentList from "./RegisteredStudentList";
 import RegisteredStudentChart from "./RegisteredStudentChart";
 import RegisteredStudentFilter from "./RegisteredStudentFilter";
 
-function Registrations(props) {
-    const [filteredCourse, setFilteredCourse] = useState("fullstack");
+function Registrations({ registeredStudents, courses }) {
+  const [filteredCourse, setFilteredCourse] = useState(courses[0]);
 
-    const filteredChangeHandler = (selectedCourse) => {
-        setFilteredCourse(selectedCourse);
-    };
+  const filteredChangeHandler = (selectedCourseId) => {
+    const castedSelectedCourseId = Number(selectedCourseId);
+    const foundedCourse = courses.find((course) => {
+      return course.id === castedSelectedCourseId;
+    });
 
-    const filteredRegisteredStudents = props.registeredStudents.filter(
-        (student) => {
-            return student.course === filteredCourse;
-        }
-    );
+    setFilteredCourse(foundedCourse);
+  };
 
-    return (
-        <div className="registrations card">
-            <RegisteredStudentChart
-                registeredStudents={props.registeredStudents}
-                courses={props.courses}
-            />
-            <RegisteredStudentFilter
-                selected={filteredCourse}
-                onChangeFilter={filteredChangeHandler}
-            />
-            <RegisteredStudentList
-                registeredStudents={filteredRegisteredStudents}
-                courses={props.courses}
-            />
-        </div>
-    );
+  const filteredRegisteredStudents = registeredStudents.filter((student) => {
+    return student.courseId === filteredCourse.id;
+  });
+
+  return (
+    <div className="registrations card">
+      <RegisteredStudentChart
+        registeredStudents={registeredStudents}
+        courses={courses}
+      />
+      <RegisteredStudentFilter
+        selected={filteredCourse.id}
+        onChangeFilter={filteredChangeHandler}
+        courses={courses}
+      />
+      <RegisteredStudentList
+        registeredStudents={filteredRegisteredStudents}
+        course={filteredCourse}
+      />
+    </div>
+  );
 }
 
 export default Registrations;

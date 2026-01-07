@@ -1,79 +1,94 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import NewStudent from "./components/newStudent/NewStudent";
 import Registrations from "./components/studentsRegistration/Registrations";
-
-const DUMMY_DATA = [
-    {
-        id: "1",
-        studentName: "John Doe",
-        course: "fullstack",
-    },
-    {
-        id: "2",
-        studentName: "Eli Finish",
-        course: "qa",
-    },
-    {
-        id: "3",
-        studentName: "David Doe",
-        course: "fullstack",
-    },
-    {
-        id: "4",
-        studentName: "Jeremy Finish",
-        course: "qa",
-    },
-];
-
-const DUMMY_COURSES = {
-    fullstack: {
-        id: 1,
-        name: "fullstack",
-        displayName: "Fullstack course",
-        startDate: new Date(2024, 6, 1),
-    },
-    qa: {
-        id: 2,
-        name: "qa",
-        displayName: "QA course",
-        startDate: new Date(2025, 3, 1),
-    },
-    cyber: {
-        id: 3,
-        name: "cyber",
-        displayName: "Cyber course",
-        startDate: new Date(2026, 3, 1),
-    },
-    product: {
-        id: 4,
-        name: "product",
-        displayName: "Product Manager course",
-        startDate: new Date(2025, 2, 23),
-    },
-};
+import { getAllCourses, getAllStudents, createStudent } from "./services/api";
+import {
+  normalizeCourseName,
+  normalizeCourseDate,
+  normalizeStudentFullName,
+} from "./utils/utils";
 
 function App() {
-    const [registeredStudents, setRegisteredStudents] = useState(DUMMY_DATA);
+  const [registeredStudents, setRegisteredStudents] = useState([]);
+  const [availableCourses, setAvailableCourses] = useState([]);
 
-    const addStudentHandler = (student) => {
-        setRegisteredStudents((prevStudents) => {
-            return [...prevStudents, student];
+  useEffect(() => {
+    getAllCourses().then((res) => {
+      const courses = res.data.map((course) => {
+        const formattedDate = normalizeCourseDate(course.startDate);
+        const formattedCourseName = normalizeCourseName(course.name);
+        return {
+          ...course,
+          startDate: formattedDate,
+          displayName: formattedCourseName,
+        };
+      });
+      getAllStudents().then((res) => {
+        const students = res.data.map((student) => {
+          const fullName = normalizeStudentFullName(
+            student.firstName,
+            student.lastName
+          );
+          return {
+            ...student,
+            studentName: fullName,
+          };
         });
+        setAvailableCourses(courses);
+        setRegisteredStudents(students);
+      });
+    });
+  }, []);
+
+  const addStudentHandler = (student) => {
+    const splittedStudentName = student.studentName.split(" ");
+    const studentToCreate = {
+      firstName: splittedStudentName[0],
+      lastName: splittedStudentName[1],
+      courseId: student.courseId,
     };
 
-    return (
-        <div className="App">
-            <NewStudent
-                onRegisteredNewStudent={addStudentHandler}
-                courses={DUMMY_COURSES}
-            />
-            <Registrations
-                registeredStudents={registeredStudents}
-                courses={DUMMY_COURSES}
-            />
+    createStudent(studentToCreate)
+      .then((res) => {
+        console.log("Create new student " + res.data);
+        getAllStudents().then((res) => {
+          const students = res.data.map((student) => {
+            const fullName = normalizeStudentFullName(
+              student.firstName,
+              student.lastName
+            );
+            return {
+              ...student,
+              studentName: fullName,
+            };
+          });
+          setRegisteredStudents(students);
+        });
+      })
+      .catch((err) => {
+        console.log("didnt create student");
+      });
+  };
+
+  return (
+    <div className="App">
+      {availableCourses.length === 0 ? (
+        "Loading"
+      ) : (
+        <div>
+          <NewStudent
+            onRegisteredNewStudent={addStudentHandler}
+            courses={availableCourses}
+          />
+          <Registrations
+            registeredStudents={registeredStudents}
+            courses={availableCourses}
+          />
         </div>
-    );
+      )}
+    </div>
+  );
 }
 
 export default App;
